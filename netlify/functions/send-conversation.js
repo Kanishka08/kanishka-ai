@@ -1,51 +1,116 @@
+const nodemailer = require("nodemailer");
+
 exports.handler = async (event) => {
+
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return {
+      statusCode: 405,
+      body: "Method Not Allowed",
+    };
   }
 
   try {
-    const { messages } = JSON.parse(event.body);
+
+    const { messages } =
+      JSON.parse(event.body);
 
     const realMessages = messages.filter(
-      (m) => !(m.role === "assistant" && m.content.startsWith("Hi! 👋"))
+      (m) =>
+        !(m.role === "assistant" &&
+          m.content.startsWith("Hi! 👋"))
     );
 
     if (realMessages.length === 0) {
-      return { statusCode: 200, body: "No conversation to send" };
+
+      return {
+        statusCode: 200,
+        body: "No conversation to send",
+      };
+
     }
 
     const transcript = realMessages
-      .map((m) => `${m.role === "user" ? "🧑 Visitor" : "🤖 AI"}: ${m.content}`)
-      .join("\n\n");
+      .map(
+        (m) =>
+          `${m.role === "user"
+            ? "🧑 Visitor"
+            : "🤖 AI"}:\n\n${m.content}`
+      )
+      .join("\n\n----------------------\n\n");
 
-    const totalQuestions = realMessages.filter((m) => m.role === "user").length;
+    const totalQuestions =
+      realMessages.filter(
+        (m) => m.role === "user"
+      ).length;
 
-    const formData = new URLSearchParams();
-    formData.append("Name", "Portfolio Chat — Conversation Summary");
-    formData.append("Email", "chat-widget@portfolio.com");
-    formData.append(
-      "Message",
-      `Someone just had a conversation on your portfolio!\n\n` +
-      `Total questions asked: ${totalQuestions}\n\n` +
-      `--- FULL CONVERSATION ---\n\n${transcript}`
-    );
+    // EMAIL TRANSPORT
 
-    await fetch(
-      "https://script.google.com/macros/s/AKfycbx8LVPXcIfv-z2IMBpXnV6yKNoAT17taScBF0onA7aRcKV5pTxDGEnkmcwyDkMucjki/exec",
-      { method: "POST", body: formData }
-    );
+    const transporter =
+      nodemailer.createTransport({
+
+        service: "gmail",
+
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+
+      });
+
+    // SEND EMAIL
+
+    await transporter.sendMail({
+
+      from: process.env.EMAIL_USER,
+
+      to: process.env.EMAIL_USER,
+
+      subject:
+        "New AI Chatbot Conversation",
+
+      text:
+        `New visitor conversation on portfolio\n\n` +
+
+        `Total Questions Asked: ${totalQuestions}\n\n` +
+
+        `==============================\n\n` +
+
+        transcript,
+
+    });
 
     return {
+
       statusCode: 200,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ sent: true }),
+
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+
+      body: JSON.stringify({
+        success: true,
+      }),
+
     };
-  } catch (err) {
-    console.error("Send conversation error:", err);
+
+  } catch (error) {
+
+    console.error(error);
+
     return {
+
       statusCode: 500,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: "Failed to send" }),
+
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
+
+      body: JSON.stringify({
+        error: "Failed to send conversation",
+      }),
+
     };
+
   }
+
 };
