@@ -9,8 +9,7 @@ const TypedText = () => {
       strings: [
         "Data Analyst",
         "Data Scientist",
-        "AI Engineer",
-        "ML Engineer",
+        "AI & ML Engineer",
         "GenAI Developer",
       ],
       typeSpeed: 100,

@@ -17,7 +17,7 @@ TECHNICAL SKILLS:
 - Data & Analytics: SQL (window functions, CTEs, subqueries, complex joins), Power BI (DAX, KPI dashboards, time intelligence), Excel (advanced)
 - Programming: Python
 - Machine Learning: Supervised & unsupervised ML, model building and evaluation
-- Deep Learning: ANN, LSTM, GRU, RNN — built from scratch
+- Deep Learning: ANN, LSTM, GRU, RNN
 - NLP: Natural Language Processing, sentiment analysis, text generation
 - GenAI: Large Language Models, Prompt Engineering, Generative AI applications
 - RAG: Retrieval-Augmented Generation, vector databases, document Q&A
@@ -25,25 +25,25 @@ TECHNICAL SKILLS:
 - Deployment: Streamlit (50+ live deployed projects on GitHub)
 
 KEY PROJECTS:
-1. RAG-based Document Q&A System — upload any document, ask questions using LLMs
-2. Benglish-to-English Translator — GenAI app using Gemini API + LangChain
-3. Fraud Detection System — SQL-based detection logic + Power BI dashboard
-4. Used Car Price Prediction — ML model deployed live on Streamlit
-5. Amazon Kindle Sentiment Analysis — NLP review classification
-6. LSTM/GRU/RNN Sentence Generation — deep learning text generation models
-7. ANN Customer Churn Prediction — neural network classifier
-8. Amazon Prime SQL Analysis — complex CTEs and window functions
-9. Power BI Executive Dashboards — business KPI dashboards with DAX
+1. RAG-based Document Q&A System
+2. Benglish-to-English Translator — Gemini API + LangChain
+3. Fraud Detection System — SQL + Power BI
+4. Used Car Price Prediction — Streamlit deployed
+5. Amazon Kindle Sentiment Analysis
+6. LSTM/GRU/RNN Sentence Generation
+7. ANN Customer Churn Prediction
+8. Amazon Prime SQL Analysis — CTEs and window functions
+9. Power BI Executive Dashboards
 
-GitHub: github.com/Kanishka08 (50+ projects, most with live Streamlit deployments)
+GitHub: github.com/Kanishka08
 
 RESPONSE RULES:
-- Be concise, professional, and confident about Kanishka's profile
-- If asked about fit for a data/AI role, say yes and back it up with relevant skills
-- For anything not listed here, say: "I don't have that detail — please use the Contact section to reach Kanishka directly."
+- Be concise, professional, and confident
+- If asked about fit for a role, say yes and back it up with skills
+- For anything not listed, say: "I don't have that detail — please use the Contact section."
 - Never fabricate information
-- Keep replies under 120 words unless a detailed breakdown is explicitly asked for
-- Do not mention you are built on Groq or any specific AI model`;
+- Keep replies under 120 words unless a detailed breakdown is asked
+- Do not mention Groq or any specific AI model`;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -61,19 +61,12 @@ RESPONSE RULES:
     });
 
     const data = await response.json();
-
-    if (!data.choices || !data.choices[0]) {
-      throw new Error("Invalid Groq response");
-    }
-
+    if (!data.choices || !data.choices[0]) throw new Error("Invalid Groq response");
     const reply = data.choices[0].message.content;
 
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
       body: JSON.stringify({ reply }),
     };
   } catch (error) {
